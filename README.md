@@ -1,5 +1,5 @@
 # HandlerThreadDemo
- C++模仿Android实现Handler机制
+ **C++模仿Android实现Handler机制**
  
  **调用方式：**
  ```c++
@@ -15,6 +15,10 @@
  **Handle处理逻辑：**
  
 ```c++
+void fun1() {
+    std::cout << "Test fun1" << endl;
+}
+
 void handleMessage(Message &msg) override {
         int what = msg.what;
         switch (what) {
