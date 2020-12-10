@@ -13,7 +13,7 @@
 using namespace std;
 
 class Handler {
-private:
+protected:
     Looper *my_looper_;
 
 public:
@@ -22,6 +22,8 @@ public:
     Handler(Looper *looper);
 
     virtual ~Handler();
+
+    void setLooper(Looper *looper);
 
     bool post(std::function<void()> &&f);
 

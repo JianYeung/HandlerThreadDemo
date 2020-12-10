@@ -10,7 +10,7 @@
 
 
 Handler::Handler() {
-    my_looper_ = new Looper();
+
 }
 
 Handler::Handler(Looper *looper) {
@@ -19,6 +19,10 @@ Handler::Handler(Looper *looper) {
 
 Handler::~Handler() {
     delete my_looper_;
+}
+
+void Handler::setLooper(Looper *looper) {
+    my_looper_ = looper;
 }
 
 bool Handler::post(std::function<void()> &&f) {
@@ -34,6 +38,9 @@ bool Handler::postDelayed(std::function<void()> &&f, long delayMillis) {
 }
 
 bool Handler::postAtTime(std::function<void()> &&f, std::chrono::system_clock::time_point when) {
+    if (my_looper_ == nullptr) {
+        return false;
+    }
     Message msg {};
     msg.setWhen(when);
     msg.setTask(std::forward<std::function<void()>>(f));
@@ -54,6 +61,9 @@ bool Handler::sendMessageDelayed(Message &msg, long delayMillis) {
 }
 
 bool Handler::sendMessageAtTime(Message &msg, std::chrono::system_clock::time_point when) {
+    if (my_looper_ == nullptr) {
+        return false;
+    }
     msg.setWhen(when);
     msg.setTarget(this);
     return my_looper_->enqueueMessage(msg);
@@ -73,6 +83,10 @@ bool Handler::sendEmptyMessageDelayed(int what, long delayMillis) {
 }
 
 bool Handler::sendEmptyMessageAtTime(int what, std::chrono::system_clock::time_point when) {
+    if (my_looper_ == nullptr) {
+        return false;
+    }
+
     if (what < 0) {
         return false;
     }
@@ -84,10 +98,16 @@ bool Handler::sendEmptyMessageAtTime(int what, std::chrono::system_clock::time_p
 }
 
 void Handler::removeMessage(int what) {
+    if (my_looper_ == nullptr) {
+        return;
+    }
     my_looper_->dequeueMessage(what);
 }
 
 void Handler::removeCallbacksAndMessages() {
+    if (my_looper_ == nullptr) {
+        return;
+    }
     my_looper_->dequeueAllMessage();
 }
 
@@ -107,9 +127,15 @@ void Handler::handleMessage(Message &msg) {
 }
 
 void Handler::quit() {
+    if (my_looper_ == nullptr) {
+        return;
+    }
     my_looper_->quit();
 }
 
 void Handler::quitSafety() {
+    if (my_looper_ == nullptr) {
+        return;
+    }
     my_looper_->quitSafety();
 }

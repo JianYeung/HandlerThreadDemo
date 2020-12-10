@@ -21,6 +21,7 @@ private:
     std::mutex queue_mutex_;
     std::condition_variable queue_condition_;
 
+    bool isRunning = false;
     bool stop = false;
     bool stopSafety = false;
 

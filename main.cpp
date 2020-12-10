@@ -6,10 +6,6 @@
 
 class MyHandler : public Handler {
 public:
-    MyHandler() : Handler() {
-
-    }
-
     MyHandler(Looper *looper) : Handler(looper) {
 
     }
