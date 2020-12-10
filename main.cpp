@@ -6,7 +6,7 @@
 
 class MyHandler : public Handler {
 public:
-    MyHandler(Looper *looper) : Handler(looper) {
+    explicit MyHandler(Looper *looper) : Handler(looper) {
 
     }
 

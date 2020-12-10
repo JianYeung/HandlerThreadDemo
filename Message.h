@@ -18,25 +18,29 @@ public:
     int what;
     int arg1;
     int arg2;
+    void *obj;
     std::chrono::system_clock::time_point when;
     Function task;
     Handler *target;
-    Message *next;
 
 public:
     Message();
 
-    Message(int what);
+    explicit Message(int what);
 
-    Message(int what, int arg1);
+    explicit Message(int what, int arg1);
 
-    Message(int what, int arg1, int arg2);
+    explicit Message(int what, int arg1, int arg2);
 
-    Message(int what, int arg1, int arg2, long uptimeMillis);
+    explicit Message(int what, int arg1, int arg2, void *obj);
 
-    Message(int what, int arg1, int arg2, long uptimeMillis, Handler *target);
+    explicit Message(int what, int arg1, int arg2, void *obj, long uptimeMillis);
+
+    explicit Message(int what, int arg1, int arg2, void *obj, long uptimeMillis, Handler *target);
 
     virtual ~Message();
+
+    void setObj(void *obj);
 
     void setWhen(std::chrono::system_clock::time_point &when);
 
