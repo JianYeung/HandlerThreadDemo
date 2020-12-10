@@ -13,30 +13,21 @@ using namespace std;
 
 class Looper {
 private:
-    static Looper *my_looper_;
-
     std::thread msg_thread_;
     std::vector<Message> msg_queue_;
 
     std::mutex queue_mutex_;
     std::condition_variable queue_condition_;
 
-    bool isRunning = false;
     bool stop = false;
     bool stopSafety = false;
 
 public:
-    static Looper* myLooper();
-
-    static void prepare();
-
-    static void loop();
-
-    static void run();
-
     Looper();
 
     virtual ~Looper();
+
+    static void run(Looper *looper);
 
     bool enqueueMessage(Message &msg);
 

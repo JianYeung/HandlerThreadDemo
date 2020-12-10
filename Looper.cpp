@@ -6,31 +6,18 @@
 #include <iostream>
 #include "Handler.h"
 
-Looper *Looper::my_looper_ = nullptr;
-
-Looper *Looper::myLooper() {
-    return my_looper_;
-}
-
-void Looper::prepare() {
-    my_looper_ = new Looper();
-}
-
-void Looper::loop() {
-    my_looper_->msg_thread_ = std::thread(&Looper::run);
-}
-
-void Looper::run() {
+void Looper::run(Looper *looper) {
+    auto my_looper_ = looper;
     while (true) {
         Message msg;
         {
             std::unique_lock<std::mutex> lock(my_looper_->queue_mutex_);
             if (my_looper_->msg_queue_.empty()) {
-                my_looper_->queue_condition_.wait(lock, [] {
+                my_looper_->queue_condition_.wait(lock, [my_looper_] {
                     return my_looper_->stop || my_looper_->stopSafety || !my_looper_->msg_queue_.empty();
                 });
             } else {
-                my_looper_->queue_condition_.wait_until(lock, my_looper_->msg_queue_.back().when, [] {
+                my_looper_->queue_condition_.wait_until(lock, my_looper_->msg_queue_.back().when, [my_looper_]  {
                     return my_looper_->stop || my_looper_->stopSafety || !my_looper_->msg_queue_.empty();
                 });
             }
@@ -58,6 +45,7 @@ void Looper::run() {
 
 Looper::Looper() {
     msg_queue_ = std::vector<Message>();
+    msg_thread_ = std::thread(&Looper::run, this);
 }
 
 Looper::~Looper() {

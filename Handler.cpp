@@ -9,9 +9,7 @@
 #include "Message.h"
 
 
-Handler::Handler() {
-
-}
+Handler::Handler() = default;
 
 Handler::Handler(Looper *looper) {
     my_looper_ = looper;

@@ -3,9 +3,7 @@
  
  **调用方式：**
  ```c++
-    Looper::prepare();
-    Looper::loop();
-    auto handler = MyHandler(Looper::myLooper());
+    auto handler = MyHandler(new Looper());
     handler.postDelayed(fun1, 2000);
     handler.sendEmptyMessage(3);
     handler.sendEmptyMessageDelayed(TEST02, 3000);

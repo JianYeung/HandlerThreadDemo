@@ -14,12 +14,12 @@ using namespace std;
 
 class Handler {
 protected:
-    Looper *my_looper_;
+    Looper *my_looper_{};
 
 public:
     Handler();
 
-    Handler(Looper *looper);
+    explicit Handler(Looper *looper);
 
     virtual ~Handler();
 
