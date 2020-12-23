@@ -25,19 +25,19 @@ public:
 
     void setLooper(Looper *looper);
 
-    bool post(std::function<void()> &&f);
+    bool post(std::function<void()> &&f, bool flush = false);
 
     bool postDelayed(std::function<void()> &&f, long delayMillis);
 
     bool postAtTime(std::function<void()> &&f, std::chrono::system_clock::time_point);
 
-    bool sendMessage(Message &msg);
+    bool sendMessage(Message &msg, bool flush = false);
 
     bool sendMessageDelayed(Message &msg,  long delayMillis);
 
     bool sendMessageAtTime(Message &msg, std::chrono::system_clock::time_point);
 
-    bool sendEmptyMessage(int what);
+    bool sendEmptyMessage(int what, bool flush = false);
 
     bool sendEmptyMessageDelayed(int what, long delayMillis);
 

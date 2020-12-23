@@ -18,7 +18,7 @@ void Looper::run(Looper *looper) {
                 });
             } else {
                 my_looper_->queue_condition_.wait_until(lock, my_looper_->msg_queue_.back().when, [my_looper_]  {
-                    return my_looper_->stop || my_looper_->stopSafety || !my_looper_->msg_queue_.empty();
+                    return my_looper_->stop || my_looper_->stopSafety || my_looper_->msg_queue_.empty();
                 });
             }
 
@@ -32,8 +32,14 @@ void Looper::run(Looper *looper) {
             }
 
             if (!my_looper_->msg_queue_.empty()) {
-                msg = std::move(my_looper_->msg_queue_.back());
-                my_looper_->msg_queue_.pop_back();
+                Message temp = my_looper_->msg_queue_.back();
+                auto now = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now());
+                auto when = std::chrono::time_point_cast<std::chrono::milliseconds>(temp.when);
+                auto delay = now.time_since_epoch().count() - when.time_since_epoch().count();
+                if (delay >= 0) {
+                    msg = std::move(temp);
+                    my_looper_->msg_queue_.pop_back();
+                }
             }
         }
 

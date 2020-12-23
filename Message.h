@@ -42,6 +42,8 @@ public:
 
     void setObj(void *obj);
 
+    void setWhen(long uptimeMillis);
+
     void setWhen(std::chrono::system_clock::time_point &when);
 
     void setTask(std::function<void()> &&f);

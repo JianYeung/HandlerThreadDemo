@@ -2,6 +2,7 @@
 // Created by jian.yeung on 2020/12/7.
 //
 
+#include <iostream>
 #include "Message.h"
 
 Message::Message() : Message(0, 0, 0, nullptr, 0, nullptr) {
@@ -37,6 +38,12 @@ Message::Message(int what, int arg1, int arg2, void *obj, long uptimeMillis, Han
 
 void Message::setObj(void *obj) {
     this->obj = obj;
+}
+
+void Message::setWhen(long uptimeMillis) {
+    when = std::chrono::system_clock::now() + std::chrono::milliseconds(uptimeMillis);
+    auto whenTime = std::chrono::time_point_cast<std::chrono::milliseconds>(when);
+    std::cout << "msg what: " << this->what <<"，入队时间：" << whenTime.time_since_epoch().count() << endl;
 }
 
 void Message::setWhen(std::chrono::system_clock::time_point &when) {

@@ -23,7 +23,10 @@ void Handler::setLooper(Looper *looper) {
     my_looper_ = looper;
 }
 
-bool Handler::post(std::function<void()> &&f) {
+bool Handler::post(std::function<void()> &&f, bool flush) {
+    if (flush) {
+        my_looper_->dequeueAllMessage();
+    }
     return postDelayed(std::forward<std::function<void()>>(f), 0);
 }
 
@@ -31,8 +34,11 @@ bool Handler::postDelayed(std::function<void()> &&f, long delayMillis) {
     if (delayMillis < 0) {
         return false;
     }
-    auto when = std::chrono::system_clock::now() + std::chrono::milliseconds(delayMillis);
-    return postAtTime(std::forward<std::function<void()>>(f), when);
+    Message msg {};
+    msg.setWhen(delayMillis);
+    msg.setTask(std::forward<std::function<void()>>(f));
+    msg.setTarget(this);
+    return my_looper_->enqueueMessage(msg);
 }
 
 bool Handler::postAtTime(std::function<void()> &&f, std::chrono::system_clock::time_point when) {
@@ -46,7 +52,10 @@ bool Handler::postAtTime(std::function<void()> &&f, std::chrono::system_clock::t
     return my_looper_->enqueueMessage(msg);
 }
 
-bool Handler::sendMessage(Message &msg) {
+bool Handler::sendMessage(Message &msg, bool flush) {
+    if (flush) {
+        my_looper_->dequeueAllMessage();
+    }
     return sendMessageDelayed(msg, 0);
 }
 
@@ -54,8 +63,9 @@ bool Handler::sendMessageDelayed(Message &msg, long delayMillis) {
     if (delayMillis < 0) {
         return false;
     }
-    auto when = std::chrono::system_clock::now() + std::chrono::milliseconds(delayMillis);
-    return sendMessageAtTime(msg, when);
+    msg.setWhen(delayMillis);
+    msg.setTarget(this);
+    return my_looper_->enqueueMessage(msg);
 }
 
 bool Handler::sendMessageAtTime(Message &msg, std::chrono::system_clock::time_point when) {
@@ -67,7 +77,10 @@ bool Handler::sendMessageAtTime(Message &msg, std::chrono::system_clock::time_po
     return my_looper_->enqueueMessage(msg);
 }
 
-bool Handler::sendEmptyMessage(int what) {
+bool Handler::sendEmptyMessage(int what, bool flush) {
+    if (flush) {
+        my_looper_->dequeueAllMessage();
+    }
     return sendEmptyMessageDelayed(what, 0);
 }
 
@@ -76,8 +89,10 @@ bool Handler::sendEmptyMessageDelayed(int what, long delayMillis) {
         return false;
     }
 
-    auto when = std::chrono::system_clock::now() + std::chrono::milliseconds(delayMillis);
-    return sendEmptyMessageAtTime(what, when);
+    Message msg(what);
+    msg.setWhen(delayMillis);
+    msg.setTarget(this);
+    return my_looper_->enqueueMessage(msg);
 }
 
 bool Handler::sendEmptyMessageAtTime(int what, std::chrono::system_clock::time_point when) {
